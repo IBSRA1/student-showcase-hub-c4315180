@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-// Demo submissions data
 const demoSubmissions = [
   { id: "1", fullName: "Ahmed Hassan", groupName: "Alpha", whatsapp: "+20 123 456 789", email: "ahmed@example.com", submittedAt: "2026-04-08T14:30:00Z" },
   { id: "2", fullName: "Sara Mohamed", groupName: "Section B", whatsapp: "+20 987 654 321", email: "sara@example.com", submittedAt: "2026-04-07T10:15:00Z" },
@@ -13,67 +12,64 @@ const demoSubmissions = [
 
 const Admin = () => {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!localStorage.getItem("adminPassword")) {
-      navigate("/auth");
-    }
-  }, [navigate]);
+  useEffect(() => { if (!localStorage.getItem("adminPassword")) navigate("/auth"); }, [navigate]);
 
   return (
     <div className="min-h-screen flex flex-col relative z-[1]">
       <Navbar />
-      <div className="flex-1 py-8 pb-16">
-        <div className="max-w-[1200px] mx-auto px-8">
-          <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
+      <div className="flex-1 py-10 pb-20">
+        <div className="max-w-[1100px] mx-auto px-6">
+          {/* Header */}
+          <div className="flex items-end justify-between mb-10 opacity-0 animate-fade-in">
             <div>
-              <h1 className="text-3xl font-extrabold tracking-tight">
-                Student <span className="text-gradient">Submissions</span>
-              </h1>
-              <p className="text-muted-foreground text-sm mt-2">{demoSubmissions.length} submissions total</p>
+              <h1 className="text-2xl font-bold tracking-tight">Submissions</h1>
+              <p className="text-sm text-muted-foreground mt-1">{demoSubmissions.length} total</p>
             </div>
             <button
               onClick={() => window.location.reload()}
-              className="text-sm font-semibold px-5 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-muted-foreground hover:bg-white/[0.07] hover:text-foreground transition-all"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground px-4 py-2 rounded-xl glass transition-all hover:border-primary/20"
             >
-              ↻ Refresh
+              Refresh
             </button>
           </div>
 
-          <div className="overflow-x-auto rounded-2xl border border-white/10">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr>
-                  {["Date", "Name", "Group", "WhatsApp", "Email", "Files"].map((h) => (
-                    <th key={h} className="px-6 py-4 text-[0.72rem] uppercase tracking-[0.08em] text-muted-foreground bg-white/[0.02] border-b border-white/7 whitespace-nowrap text-left">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {demoSubmissions.map((sub) => {
-                  const d = new Date(sub.submittedAt);
-                  return (
-                    <tr key={sub.id} className="hover:bg-white/[0.02]">
-                      <td className="px-6 py-4 border-b border-white/5 text-sm">
-                        {d.toLocaleDateString()}{" "}
-                        <span className="text-muted-foreground">{d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
-                      </td>
-                      <td className="px-6 py-4 border-b border-white/5 font-semibold text-sm">{sub.fullName}</td>
-                      <td className="px-6 py-4 border-b border-white/5 text-sm">{sub.groupName}</td>
-                      <td className="px-6 py-4 border-b border-white/5 text-sm">{sub.whatsapp}</td>
-                      <td className="px-6 py-4 border-b border-white/5 text-sm text-accent">{sub.email}</td>
-                      <td className="px-6 py-4 border-b border-white/5 text-sm">
-                        <button className="text-xs font-semibold px-3 py-1 rounded-md bg-white/[0.04] border border-white/10 text-muted-foreground hover:bg-white/[0.07] transition-all">
-                          📥 Download
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+          {/* Table */}
+          <div className="glass rounded-2xl overflow-hidden opacity-0 animate-slide-up stagger-2">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-border/50">
+                    {["Date", "Name", "Group", "WhatsApp", "Email", ""].map((h) => (
+                      <th key={h} className="px-5 py-3.5 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground text-left whitespace-nowrap">
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {demoSubmissions.map((sub, i) => {
+                    const d = new Date(sub.submittedAt);
+                    return (
+                      <tr key={sub.id} className={`border-b border-border/30 hover:bg-muted/20 transition-colors ${i === demoSubmissions.length - 1 ? "border-b-0" : ""}`}>
+                        <td className="px-5 py-4 text-sm text-muted-foreground whitespace-nowrap">
+                          {d.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                          <span className="ml-1.5 text-muted-foreground/50">{d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
+                        </td>
+                        <td className="px-5 py-4 text-sm font-medium">{sub.fullName}</td>
+                        <td className="px-5 py-4 text-sm text-muted-foreground">{sub.groupName}</td>
+                        <td className="px-5 py-4 text-sm text-muted-foreground">{sub.whatsapp}</td>
+                        <td className="px-5 py-4 text-sm text-primary">{sub.email}</td>
+                        <td className="px-5 py-4">
+                          <button className="text-xs font-medium text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-lg glass transition-all hover:border-primary/20">
+                            Download
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
