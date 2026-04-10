@@ -12,56 +12,58 @@ const demoBlogs = [
   { id: "6", title: "The Future of AI in Education", status: "scheduled", date: "Mar 10, 2026" },
 ];
 
-const statusStyles: Record<string, string> = {
-  posted: "bg-green-500/15 text-green-300 border-green-500/20",
-  draft: "bg-slate-500/15 text-slate-400 border-slate-500/20",
-  scheduled: "bg-amber-500/15 text-amber-300 border-amber-500/20",
+const statusConfig: Record<string, { label: string; dot: string; bg: string }> = {
+  posted: { label: "Live", dot: "bg-green-400", bg: "bg-green-500/8 text-green-400" },
+  draft: { label: "Draft", dot: "bg-muted-foreground", bg: "bg-muted/50 text-muted-foreground" },
+  scheduled: { label: "Scheduled", dot: "bg-amber-400", bg: "bg-amber-500/8 text-amber-400" },
 };
 
 const AdminBlogs = () => {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!localStorage.getItem("adminPassword")) navigate("/auth");
-  }, [navigate]);
+  useEffect(() => { if (!localStorage.getItem("adminPassword")) navigate("/auth"); }, [navigate]);
 
   return (
     <div className="min-h-screen flex flex-col relative z-[1]">
       <Navbar />
-      <div className="flex-1 py-8 pb-16">
-        <div className="max-w-[1200px] mx-auto px-8">
-          <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
+      <div className="flex-1 py-10 pb-20">
+        <div className="max-w-[1100px] mx-auto px-6">
+          <div className="flex items-end justify-between mb-10 opacity-0 animate-fade-in">
             <div>
-              <h1 className="text-3xl font-extrabold tracking-tight">
-                Blog <span className="text-gradient">Articles</span>
-              </h1>
-              <p className="text-muted-foreground text-sm mt-2">Create, edit, and manage your published content.</p>
+              <h1 className="text-2xl font-bold tracking-tight">Articles</h1>
+              <p className="text-sm text-muted-foreground mt-1">Manage your published content</p>
             </div>
-            <Link to="/admin/editor" className="text-sm font-semibold px-5 py-2 rounded-lg btn-brand text-white transition-all">
-              + New Article
+            <Link to="/admin/editor" className="text-sm font-semibold px-5 py-2.5 rounded-xl btn-glow">
+              <span>New Article</span>
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {demoBlogs.map((blog) => (
-              <div key={blog.id} className="glass-card p-6 flex flex-col gap-3 hover:border-primary hover:-translate-y-1 transition-all duration-200">
-                <div className="flex justify-between items-start">
-                  <span className={`inline-block px-2.5 py-0.5 rounded-full text-[0.7rem] font-bold uppercase tracking-wider border ${statusStyles[blog.status]}`}>
-                    {blog.status}
-                  </span>
-                  <span className="text-xs text-muted-foreground">{blog.date}</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {demoBlogs.map((blog, i) => {
+              const status = statusConfig[blog.status] || statusConfig.draft;
+              return (
+                <div key={blog.id} className={`glass rounded-2xl p-5 flex flex-col gap-4 card-hover opacity-0 animate-slide-up stagger-${i + 1}`}>
+                  <div className="flex justify-between items-center">
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider ${status.bg}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
+                      {status.label}
+                    </span>
+                    <span className="text-xs text-muted-foreground">{blog.date}</span>
+                  </div>
+                  <h3 className="text-sm font-semibold leading-snug flex-1">{blog.title}</h3>
+                  <div className="flex gap-2">
+                    <Link
+                      to={`/admin/editor?id=${blog.id}`}
+                      className="flex-1 text-center text-xs font-medium py-2 rounded-xl glass hover:border-primary/20 transition-all"
+                    >
+                      Edit
+                    </Link>
+                    <button className="text-xs font-medium py-2 px-3 rounded-xl text-destructive/70 hover:bg-destructive/8 hover:text-destructive transition-all">
+                      Delete
+                    </button>
+                  </div>
                 </div>
-                <h3 className="text-lg font-bold leading-snug">{blog.title}</h3>
-                <div className="flex gap-3 mt-auto pt-3">
-                  <Link to={`/admin/editor?id=${blog.id}`} className="flex-1 text-center text-sm font-semibold py-2 rounded-lg bg-white/[0.04] border border-white/10 text-muted-foreground hover:bg-white/[0.07] hover:text-foreground transition-all">
-                    Edit
-                  </Link>
-                  <button className="text-sm font-semibold py-2 px-4 rounded-lg bg-destructive/10 text-red-300 border border-destructive/20 hover:bg-destructive/20 transition-all">
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

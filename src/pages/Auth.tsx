@@ -24,45 +24,49 @@ const Auth = () => {
   return (
     <div className="min-h-screen flex flex-col relative z-[1]">
       <Navbar />
-      <main className="flex-1 flex items-center justify-center p-8">
-        <div className="glass-card p-8 max-w-[440px] w-full">
-          <h1 className="text-4xl font-extrabold tracking-tight text-center mb-3">
-            Welcome to <span className="text-gradient">Portal</span>
-          </h1>
-          <p className="text-center text-muted-foreground mb-8">
-            Sign in to access student features or manage the platform.
-          </p>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-5">
-              <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Email Address</label>
-              <input
-                type="email"
-                className="w-full px-4 py-3 bg-black/25 border border-white/7 rounded-lg text-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 placeholder:text-muted-foreground transition-all"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="mb-5">
-              <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Identification Code / Password</label>
-              <input
-                type="password"
-                className="w-full px-4 py-3 bg-black/25 border border-white/7 rounded-lg text-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 placeholder:text-muted-foreground transition-all"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <button type="submit" className="w-full py-4 mt-4 rounded-lg btn-brand text-white font-semibold transition-all border-none cursor-pointer">
-              Continue to Dashboard →
-            </button>
-          </form>
-          <div className="mt-10 text-center text-sm text-muted-foreground leading-relaxed">
-            Looking to submit your work?<br />
-            <Link to="/" className="text-accent font-semibold hover:underline">Return to Portfolio Submissions</Link>
+      <main className="flex-1 flex items-center justify-center p-6">
+        <div className="w-full max-w-sm opacity-0 animate-fade-in">
+          <div className="text-center mb-10">
+            <h1 className="text-3xl font-bold tracking-tight mb-2">
+              Welcome <span className="text-gradient">back</span>
+            </h1>
+            <p className="text-sm text-muted-foreground">Sign in to access the platform</p>
           </div>
+
+          <div className="glass rounded-3xl p-8">
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label className="block text-xs font-medium text-muted-foreground mb-2 ml-1">Email</label>
+                <input
+                  type="email"
+                  className="input-clean"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-muted-foreground mb-2 ml-1">Password</label>
+                <input
+                  type="password"
+                  className="input-clean"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <button type="submit" className="w-full py-3.5 rounded-2xl btn-glow font-semibold text-sm border-none cursor-pointer mt-2">
+                <span>Continue →</span>
+              </button>
+            </form>
+          </div>
+
+          <p className="text-center mt-8 text-sm text-muted-foreground">
+            New here?{" "}
+            <Link to="/" className="text-primary font-medium hover:underline underline-offset-4">Submit your portfolio</Link>
+          </p>
         </div>
       </main>
       <Footer />

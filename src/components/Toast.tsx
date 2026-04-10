@@ -23,7 +23,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (toast.visible) {
-      const timer = setTimeout(() => setToast((t) => ({ ...t, visible: false })), 5000);
+      const timer = setTimeout(() => setToast((t) => ({ ...t, visible: false })), 4000);
       return () => clearTimeout(timer);
     }
   }, [toast.visible]);
@@ -32,12 +32,12 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
     <ToastContext.Provider value={{ showToast }}>
       {children}
       <div
-        className={`fixed bottom-8 right-8 px-6 py-4 rounded-lg border border-white/10 shadow-2xl z-[9999] text-sm max-w-[360px] transition-all duration-300 ${
-          toast.visible ? "translate-y-0 opacity-100" : "translate-y-[150%] opacity-0"
-        } ${toast.type === "success" ? "border-l-[3px] border-l-green-500" : "border-l-[3px] border-l-red-500"}`}
-        style={{ background: "hsl(220, 47%, 9%)" }}
+        className={`fixed bottom-6 right-6 px-5 py-3.5 rounded-2xl glass-strong z-[9999] text-sm max-w-[360px] transition-all duration-500 flex items-center gap-3 ${
+          toast.visible ? "translate-y-0 opacity-100 scale-100" : "translate-y-4 opacity-0 scale-95 pointer-events-none"
+        }`}
       >
-        {toast.message}
+        <span className={`w-2 h-2 rounded-full shrink-0 ${toast.type === "success" ? "bg-green-400" : "bg-red-400"}`} />
+        <span className="text-foreground">{toast.message}</span>
       </div>
     </ToastContext.Provider>
   );
