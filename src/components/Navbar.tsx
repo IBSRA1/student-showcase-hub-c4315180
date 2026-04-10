@@ -1,63 +1,128 @@
 import { Link, useLocation } from "react-router-dom";
+import { useState } from "react";
 
 const Navbar = () => {
   const location = useLocation();
   const email = localStorage.getItem("readerEmail");
   const isAdmin = location.pathname.startsWith("/admin");
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <nav className="sticky top-0 z-50 h-[70px] flex items-center bg-background/85 backdrop-blur-xl border-b border-white/10 px-8">
-      <div className="max-w-[1200px] w-full mx-auto flex items-center justify-between">
-        <Link to="/" className="text-xl font-extrabold text-gradient tracking-tight">
-          Story Weaver
-        </Link>
-        <div className="flex gap-4 items-center">
-          {isAdmin ? (
-            <>
-              <Link to="/admin" className="text-sm font-medium text-muted-foreground hover:text-foreground px-3 py-2 rounded-lg transition-colors hover:bg-white/5">
-                👥 Submissions
-              </Link>
-              <Link to="/admin/blogs" className="text-sm font-medium text-muted-foreground hover:text-foreground px-3 py-2 rounded-lg transition-colors hover:bg-white/5">
-                📝 Blog Articles
-              </Link>
-              <button
-                onClick={() => {
-                  localStorage.removeItem("adminPassword");
-                  window.location.href = "/auth";
-                }}
-                className="text-sm font-semibold px-5 py-2 rounded-lg bg-destructive/10 text-red-300 border border-destructive/20 hover:bg-destructive/20 transition-all"
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <>
-              <Link to="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground px-3 py-2 rounded-lg transition-colors hover:bg-white/5">
-                Blog
-              </Link>
-              {email ? (
+    <nav className="sticky top-0 z-50 w-full">
+      <div className="mx-auto max-w-[1200px] px-6 py-4">
+        <div className="glass-strong rounded-2xl px-6 py-3 flex items-center justify-between">
+          <Link to="/" className="text-lg font-bold tracking-tight text-foreground hover:text-primary transition-colors">
+            Story<span className="text-gradient">Weaver</span>
+          </Link>
+
+          {/* Desktop Nav */}
+          <div className="hidden md:flex gap-1 items-center">
+            {isAdmin ? (
+              <>
+                <NavItem to="/admin" label="Submissions" active={location.pathname === "/admin"} />
+                <NavItem to="/admin/blogs" label="Articles" active={location.pathname === "/admin/blogs"} />
+                <NavItem to="/admin/editor" label="New Post" active={location.pathname === "/admin/editor"} />
+                <div className="w-px h-5 bg-border mx-2" />
                 <button
                   onClick={() => {
-                    if (confirm("Log out?")) {
-                      localStorage.removeItem("readerEmail");
-                      window.location.reload();
-                    }
+                    localStorage.removeItem("adminPassword");
+                    window.location.href = "/auth";
                   }}
-                  className="text-sm font-semibold px-5 py-2 rounded-lg btn-brand text-white transition-all"
+                  className="text-sm font-medium text-muted-foreground hover:text-destructive px-3 py-2 rounded-xl transition-colors"
                 >
-                  {email.split("@")[0]}
+                  Sign Out
                 </button>
+              </>
+            ) : (
+              <>
+                <NavItem to="/" label="Submit" active={location.pathname === "/"} />
+                <NavItem to="/blog" label="Blog" active={location.pathname.startsWith("/blog")} />
+                <div className="w-px h-5 bg-border mx-2" />
+                {email ? (
+                  <button
+                    onClick={() => {
+                      if (confirm("Sign out?")) {
+                        localStorage.removeItem("readerEmail");
+                        window.location.reload();
+                      }
+                    }}
+                    className="text-sm font-medium bg-primary/10 text-primary px-4 py-2 rounded-xl hover:bg-primary/15 transition-all"
+                  >
+                    {email.split("@")[0]}
+                  </button>
+                ) : (
+                  <Link
+                    to="/auth"
+                    className="text-sm font-semibold btn-glow px-5 py-2 rounded-xl"
+                  >
+                    <span>Sign In</span>
+                  </Link>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* Mobile toggle */}
+          <button
+            className="md:hidden text-muted-foreground hover:text-foreground p-2 rounded-lg transition-colors"
+            onClick={() => setMobileOpen(!mobileOpen)}
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              {mobileOpen ? (
+                <path d="M5 5L15 15M15 5L5 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
               ) : (
-                <Link to="/auth" className="text-sm font-semibold px-5 py-2 rounded-lg btn-brand text-white transition-all">
-                  Portal Access →
-                </Link>
+                <>
+                  <path d="M3 6H17M3 10H17M3 14H17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </>
               )}
-            </>
-          )}
+            </svg>
+          </button>
         </div>
+
+        {/* Mobile menu */}
+        {mobileOpen && (
+          <div className="md:hidden mt-2 glass-strong rounded-2xl p-4 flex flex-col gap-1 animate-fade-in">
+            {isAdmin ? (
+              <>
+                <MobileNavItem to="/admin" label="Submissions" onClick={() => setMobileOpen(false)} />
+                <MobileNavItem to="/admin/blogs" label="Articles" onClick={() => setMobileOpen(false)} />
+                <MobileNavItem to="/admin/editor" label="New Post" onClick={() => setMobileOpen(false)} />
+              </>
+            ) : (
+              <>
+                <MobileNavItem to="/" label="Submit" onClick={() => setMobileOpen(false)} />
+                <MobileNavItem to="/blog" label="Blog" onClick={() => setMobileOpen(false)} />
+                <MobileNavItem to="/auth" label="Sign In" onClick={() => setMobileOpen(false)} />
+              </>
+            )}
+          </div>
+        )}
       </div>
     </nav>
   );
 };
+
+const NavItem = ({ to, label, active }: { to: string; label: string; active: boolean }) => (
+  <Link
+    to={to}
+    className={`text-sm font-medium px-4 py-2 rounded-xl transition-all duration-200 ${
+      active
+        ? "bg-primary/10 text-primary"
+        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+    }`}
+  >
+    {label}
+  </Link>
+);
+
+const MobileNavItem = ({ to, label, onClick }: { to: string; label: string; onClick: () => void }) => (
+  <Link
+    to={to}
+    onClick={onClick}
+    className="text-sm font-medium text-muted-foreground hover:text-foreground px-4 py-3 rounded-xl hover:bg-muted/50 transition-all"
+  >
+    {label}
+  </Link>
+);
 
 export default Navbar;
